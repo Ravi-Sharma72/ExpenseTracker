@@ -51,3 +51,26 @@ exports.deleteTransaction = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+exports.updateTransaction = async (req, res) => {
+  try {
+    let transaction = await Transaction.findById(req.params.id);
+
+    if (!transaction) {
+      return res.status(404).json({ message: 'Transaction not found' });
+    }
+
+    if (transaction.user.toString() !== req.user._id.toString()) {
+      return res.status(401).json({ message: 'Not authorized' });
+    }
+
+    transaction = await Transaction.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true
+    }).populate('category', 'name color icon type');
+
+    res.json(transaction);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
