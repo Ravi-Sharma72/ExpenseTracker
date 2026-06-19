@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, ReceiptText, PieChart, LogOut } from 'lucide-react';
+import { LayoutDashboard, ReceiptText, PieChart, User, LogOut } from 'lucide-react';
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import './Sidebar.css';
@@ -28,6 +28,10 @@ const Sidebar = () => {
         <NavLink to="/budgets" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
           <PieChart size={20} />
           <span>Budgets</span>
+        </NavLink>
+        <NavLink to="/profile" className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
+          <User size={20} />
+          <span>Profile</span>
         </NavLink>
       </nav>
 

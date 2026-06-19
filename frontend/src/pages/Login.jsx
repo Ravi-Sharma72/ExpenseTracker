@@ -3,32 +3,30 @@ import { AuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
-  const [isLogin, setIsLogin] = useState(true);
+  const [viewState, setViewState] = useState('login'); // 'login', 'register', 'forgot'
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
-  const { login } = useContext(AuthContext);
+  const { login, register, resetPassword } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (isLogin) {
+    if (viewState === 'login') {
       const success = await login(email, password);
       if (success) navigate('/');
       else alert('Login failed');
-    } else {
+    } else if (viewState === 'register') {
       // Handle registration
-      const res = await fetch('http://localhost:5000/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password })
-      });
-      if (res.ok) {
-        await login(email, password);
+      const success = await register(name, email, password);
+      if (success) {
         navigate('/');
       } else {
         alert('Registration failed');
       }
+    } else if (viewState === 'forgot') {
+      const success = await resetPassword(email, password);
+      if (success) setViewState('login');
     }
   };
 
@@ -36,11 +34,11 @@ const Login = () => {
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', width: '100%' }}>
       <div className="glass-panel" style={{ width: '100%', maxWidth: '400px' }}>
         <h2 style={{ textAlign: 'center', marginBottom: '24px' }} className="text-gradient">
-          {isLogin ? 'Welcome Back' : 'Create Account'}
+          {viewState === 'login' ? 'Welcome Back' : viewState === 'register' ? 'Create Account' : 'Reset Password'}
         </h2>
         
         <form onSubmit={handleSubmit}>
-          {!isLogin && (
+          {viewState === 'register' && (
             <div className="input-group">
               <label>Name</label>
               <input 
@@ -65,7 +63,7 @@ const Login = () => {
           </div>
           
           <div className="input-group">
-            <label>Password</label>
+            <label>{viewState === 'forgot' ? 'New Password' : 'Password'}</label>
             <input 
               type="password" 
               className="input-glass" 
@@ -76,12 +74,18 @@ const Login = () => {
           </div>
           
           <button type="submit" className="btn-primary" style={{ width: '100%', marginTop: '10px' }}>
-            {isLogin ? 'Login' : 'Sign Up'}
+            {viewState === 'login' ? 'Login' : viewState === 'register' ? 'Sign Up' : 'Reset Password'}
           </button>
         </form>
         
-        <p style={{ textAlign: 'center', marginTop: '20px', color: 'var(--text-secondary)', cursor: 'pointer' }} onClick={() => setIsLogin(!isLogin)}>
-          {isLogin ? "Don't have an account? Sign Up" : "Already have an account? Login"}
+        {viewState === 'login' && (
+          <p style={{ textAlign: 'center', marginTop: '20px', color: 'var(--text-secondary)', cursor: 'pointer' }} onClick={() => setViewState('forgot')}>
+            Forgot Password?
+          </p>
+        )}
+        
+        <p style={{ textAlign: 'center', marginTop: '10px', color: 'var(--text-secondary)', cursor: 'pointer' }} onClick={() => setViewState(viewState === 'login' ? 'register' : 'login')}>
+          {viewState === 'login' ? "Don't have an account? Sign Up" : "Back to Login"}
         </p>
       </div>
     </div>

@@ -1,10 +1,10 @@
 import { useContext, useEffect, useState } from "react";
 import { ExpenseContext } from "../context/ExpenseContext";
 import { AuthContext } from "../context/AuthContext";
-import { Plus, Pencil, Trash2 } from "lucide-react";
+import { Plus, Pencil, Trash2, AlertTriangle } from "lucide-react";
 
 const Transactions = () => {
-  const { transactions, fetchTransactions, addTransaction, deleteTransaction, updateTransaction, categories } =
+  const { transactions, fetchTransactions, addTransaction, deleteTransaction, updateTransaction, resetAllTransactions, categories } =
     useContext(ExpenseContext);
   const { user } = useContext(AuthContext);
   const [showModal, setShowModal] = useState(false);
@@ -75,6 +75,12 @@ const Transactions = () => {
     setAmount("");
   };
 
+  const handleResetAll = () => {
+    if (window.confirm("Are you sure you want to delete all transactions? This cannot be undone.")) {
+      resetAllTransactions();
+    }
+  };
+
   const availableCategories = categories.filter(
     (category) => category.type === type,
   );
@@ -89,7 +95,18 @@ const Transactions = () => {
           marginBottom: "32px",
         }}
       >
-        <h1>Transactions</h1>
+        <h1 style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          Transactions
+          {transactions.length > 0 && (
+            <button 
+              onClick={handleResetAll}
+              style={{ background: 'none', border: 'none', color: 'var(--accent-red)', cursor: 'pointer', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '4px' }}
+              title="Reset All Transactions"
+            >
+              <AlertTriangle size={16} /> Reset All
+            </button>
+          )}
+        </h1>
         <button className="btn-primary" onClick={() => { closeModal(); setShowModal(true); }}>
           <Plus size={20} /> Add New
         </button>

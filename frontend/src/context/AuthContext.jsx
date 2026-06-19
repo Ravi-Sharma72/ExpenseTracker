@@ -10,7 +10,9 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     if (token) {
       if (token === 'mock-token') {
-        setUser({ _id: '1', name: 'Demo User', email: 'demo@demo.com' });
+        const mockName = localStorage.getItem('mock_user_name') || 'Demo User';
+        const mockEmail = localStorage.getItem('mock_user_email') || 'demo@demo.com';
+        setUser({ _id: '1', name: mockName, email: mockEmail });
         setLoading(false);
       } else {
         fetchUser(token);
@@ -59,8 +61,46 @@ export const AuthProvider = ({ children }) => {
     
     // Fallback for demo mode
     localStorage.setItem('token', 'mock-token');
+    localStorage.setItem('mock_user_email', email);
+    const storedName = localStorage.getItem('mock_user_name') || email.split('@')[0];
+    localStorage.setItem('mock_user_name', storedName);
+    
     setToken('mock-token');
-    setUser({ _id: '1', name: 'Demo User', email: email });
+    setUser({ _id: '1', name: storedName, email: email, memberSince: '2023-01-01' });
+    return true;
+  };
+
+  const register = async (name, email, password) => {
+    try {
+      const res = await fetch('http://localhost:5000/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password })
+      });
+      if (res.ok) {
+        return await login(email, password);
+      }
+    } catch (err) {
+      console.error('Backend unreachable, using mock user register', err);
+    }
+    
+    // Fallback for demo mode
+    localStorage.setItem('mock_user_name', name);
+    return await login(email, password);
+  };
+
+  const resetPassword = async (email, newPassword) => {
+    // In mock mode, just log it as a success
+    // A real backend would send an email link or perform update directly
+    alert("Mock: Password reset successfully for " + email);
+    return true;
+  };
+
+  const updateProfile = async (name, email) => {
+    // In mock mode
+    localStorage.setItem('mock_user_name', name);
+    localStorage.setItem('mock_user_email', email);
+    setUser(prev => ({ ...prev, name, email }));
     return true;
   };
 
@@ -71,7 +111,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, token, loading, login, logout, register, resetPassword, updateProfile }}>
       {children}
     </AuthContext.Provider>
   );
