@@ -13,20 +13,20 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (viewState === 'login') {
-      const success = await login(email, password);
-      if (success) navigate('/');
-      else alert('Login failed');
+      const result = await login(email, password);
+      if (result.success) navigate('/');
+      else alert(result.message);
     } else if (viewState === 'register') {
       // Handle registration
-      const success = await register(name, email, password);
-      if (success) {
+      const result = await register(name, email, password);
+      if (result.success) {
         navigate('/');
       } else {
-        alert('Registration failed');
+        alert(result.message);
       }
     } else if (viewState === 'forgot') {
-      const success = await resetPassword(email, password);
-      if (success) setViewState('login');
+      const result = await resetPassword(email, password);
+      if (result.success) setViewState('login');
     }
   };
 

@@ -9,14 +9,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     if (token) {
-      if (token === 'mock-token') {
-        const mockName = localStorage.getItem('mock_user_name') || 'Demo User';
-        const mockEmail = localStorage.getItem('mock_user_email') || 'demo@demo.com';
-        setUser({ _id: '1', name: mockName, email: mockEmail });
-        setLoading(false);
-      } else {
-        fetchUser(token);
-      }
+      fetchUser(token);
     } else {
       setLoading(false);
     }
@@ -24,7 +17,7 @@ export const AuthProvider = ({ children }) => {
 
   const fetchUser = async (authToken) => {
     try {
-      const res = await fetch('http://localhost:5000/api/auth/me', {
+      const res = await fetch('/api/auth/me', {
         headers: { Authorization: `Bearer ${authToken}` }
       });
       if (res.ok) {
@@ -34,8 +27,8 @@ export const AuthProvider = ({ children }) => {
         logout();
       }
     } catch (err) {
-      console.error('Backend unreachable, using mock user', err);
-      setUser({ _id: '1', name: 'Demo User', email: 'demo@demo.com' });
+      console.error('Backend unreachable', err);
+      logout();
     } finally {
       setLoading(false);
     }
@@ -43,65 +36,51 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const res = await fetch('http://localhost:5000/api/auth/login', {
+      const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
       });
+      const data = await res.json();
       if (res.ok) {
-        const data = await res.json();
         localStorage.setItem('token', data.token);
         setToken(data.token);
         setUser(data);
-        return true;
+        return { success: true };
       }
+      return { success: false, message: data.message || 'Login failed' };
     } catch (err) {
-      console.error('Backend unreachable, using mock user login', err);
+      return { success: false, message: 'Server error: Backend is down' };
     }
-    
-    // Fallback for demo mode
-    localStorage.setItem('token', 'mock-token');
-    localStorage.setItem('mock_user_email', email);
-    const storedName = localStorage.getItem('mock_user_name') || email.split('@')[0];
-    localStorage.setItem('mock_user_name', storedName);
-    
-    setToken('mock-token');
-    setUser({ _id: '1', name: storedName, email: email, memberSince: '2023-01-01' });
-    return true;
   };
 
   const register = async (name, email, password) => {
     try {
-      const res = await fetch('http://localhost:5000/api/auth/register', {
+      const res = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password })
       });
+      
       if (res.ok) {
         return await login(email, password);
       }
+      const data = await res.json();
+      return { success: false, message: data.message || 'Registration failed' };
     } catch (err) {
-      console.error('Backend unreachable, using mock user register', err);
+      return { success: false, message: 'Server error: Backend is down' };
     }
-    
-    // Fallback for demo mode
-    localStorage.setItem('mock_user_name', name);
-    return await login(email, password);
   };
 
   const resetPassword = async (email, newPassword) => {
-    // In mock mode, just log it as a success
-    // A real backend would send an email link or perform update directly
-    alert("Mock: Password reset successfully for " + email);
-    return true;
+    alert("Password reset is not implemented on the backend yet.");
+    return { success: false, message: "Not implemented" };
   };
 
   const updateProfile = async (name, email) => {
-    // In mock mode
-    localStorage.setItem('mock_user_name', name);
-    localStorage.setItem('mock_user_email', email);
+    // For now, temporarily update frontend state until backend profile edit is added.
     setUser(prev => ({ ...prev, name, email }));
-    return true;
+    return { success: true };
   };
 
   const logout = () => {

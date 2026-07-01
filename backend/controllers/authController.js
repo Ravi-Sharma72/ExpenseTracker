@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const Category = require('../models/Category');
 const jwt = require('jsonwebtoken');
 
 const generateToken = (id) => {
@@ -17,6 +18,19 @@ exports.registerUser = async (req, res) => {
     const user = await User.create({ name, email, password });
 
     if (user) {
+      // Seed default categories
+      const defaultCategories = [
+        { user: user._id, name: 'Salary', type: 'income', color: '#10b981' },
+        { user: user._id, name: 'Food', type: 'expense', color: '#3b82f6' },
+        { user: user._id, name: 'Utilities', type: 'expense', color: '#a855f7' },
+        { user: user._id, name: 'Business', type: 'income', color: '#f59e0b' },
+        { user: user._id, name: 'Entertainment', type: 'expense', color: '#ec4899' },
+        { user: user._id, name: 'Transportation', type: 'expense', color: '#eab308' },
+        { user: user._id, name: 'Health', type: 'expense', color: '#ef4444' },
+        { user: user._id, name: 'Shopping', type: 'expense', color: '#06b6d4' },
+      ];
+      await Category.insertMany(defaultCategories);
+
       res.status(201).json({
         _id: user._id,
         name: user.name,
