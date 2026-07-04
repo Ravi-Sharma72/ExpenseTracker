@@ -74,3 +74,12 @@ exports.updateTransaction = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+exports.resetTransactions = async (req, res) => {
+  try {
+    await Transaction.deleteMany({ user: req.user._id });
+    res.json({ message: 'All transactions removed' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

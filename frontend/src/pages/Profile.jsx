@@ -8,8 +8,8 @@ const Profile = () => {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
-    const success = await updateProfile(name, email);
-    if (success) {
+    const result = await updateProfile(name, email);
+    if (result.success) {
       alert('Profile updated successfully!');
     } else {
       alert('Failed to update profile.');

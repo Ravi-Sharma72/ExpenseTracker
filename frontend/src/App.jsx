@@ -7,6 +7,7 @@ import Profile from './pages/Profile';
 import Login from './pages/Login';
 import { AuthProvider } from './context/AuthContext';
 import { ExpenseProvider } from './context/ExpenseContext';
+import './App.css';
 
 import { AuthContext } from './context/AuthContext';
 import { useContext } from 'react';

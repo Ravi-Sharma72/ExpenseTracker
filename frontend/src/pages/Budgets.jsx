@@ -52,6 +52,7 @@ const Budgets = () => {
           <h3 style={{ marginBottom: '24px' }}>Current Month Overview</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             {budgets.map(b => {
+              if (!b.category) return null;
               if (b.month !== currentMonth || b.year !== currentYear) return null;
               const spent = transactions
                 .filter(t => t.type === 'expense' && t.category && t.category._id === b.category._id && new Date(t.date).getMonth() + 1 === currentMonth)

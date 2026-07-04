@@ -136,6 +136,12 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.2);
 }
 
+/* Ensure select dropdown options are visible in dark mode */
+select.input-glass option {
+  background-color: #1a1a1e;
+  color: var(--text-primary);
+}
+
 /* Layout Utilities */
 .app-container {
   display: flex;
