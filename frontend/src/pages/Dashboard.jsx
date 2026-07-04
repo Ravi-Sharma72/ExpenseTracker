@@ -69,7 +69,9 @@ const Dashboard = () => {
           <h3 style={{ color: "var(--text-secondary)", marginBottom: "8px" }}>
             Total Balance
           </h3>
-          <h2 style={{ fontSize: "2.5rem" }}>${balance.toFixed(2)}</h2>
+          <h2 style={{ fontSize: "2.5rem" }}>
+            {balance < 0 ? `-$${Math.abs(balance).toFixed(2)}` : `$${balance.toFixed(2)}`}
+          </h2>
         </div>
         <div className="glass-panel">
           <h3 style={{ color: "var(--text-secondary)", marginBottom: "8px" }}>

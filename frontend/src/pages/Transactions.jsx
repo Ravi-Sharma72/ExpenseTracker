@@ -248,6 +248,7 @@ const Transactions = () => {
                 <label>Amount</label>
                 <input
                   type="number"
+                  step="any"
                   className="input-glass"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}

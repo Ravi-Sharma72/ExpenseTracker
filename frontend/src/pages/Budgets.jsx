@@ -42,7 +42,7 @@ const Budgets = () => {
             </div>
             <div className="input-group">
               <label>Amount Limit</label>
-              <input type="number" className="input-glass" value={amount} onChange={e => setAmount(e.target.value)} required />
+              <input type="number" step="any" className="input-glass" value={amount} onChange={e => setAmount(e.target.value)} required />
             </div>
             <button type="submit" className="btn-primary" style={{ width: '100%' }}>Save Budget</button>
           </form>
